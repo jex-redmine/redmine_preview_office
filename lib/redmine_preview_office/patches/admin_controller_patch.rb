@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 #
 # Redmine plugin to preview a Microsoft Office attachment file
 #
@@ -24,38 +25,26 @@ module RedminePreviewOffice
     module AdminControllerPatch
       def self.included(base)
         base.extend(ClassMethods)
-        base.send(:include, InstanceMethods)
+        base.send(:include, InstancOverwriteMethods)
 
         base.class_eval do
           unloadable
-            
-          alias_method_chain :info, :libreoffice_for_preview_office
-          
-        end #base
-        
-      end #self
+        end # base
+      end # self
 
-      module InstanceMethods
+      module InstancOverwriteMethods
+        def info
+          super
+          @checklist << [:text_libreoffice_available_for_preview_office, Redmine::Thumbnail.libreoffice_available?]
+        end # def
+      end # module
 
-        def info_with_libreoffice_for_preview_office
-        
-         info_without_libreoffice_for_preview_office
-         @checklist << [:text_libreoffice_available_for_preview_office, Redmine::Thumbnail.libreoffice_available?]
-        
-        end #def 
-
-      end #module  
-      
-      module ClassMethods      
-      end #module    
-
-    end #module
-  end #module
-end #module
+      module ClassMethods
+      end # module
+    end # module
+  end # module
+end # module
 
 unless AdminController.included_modules.include?(RedminePreviewOffice::Patches::AdminControllerPatch)
-    AdminController.send(:include, RedminePreviewOffice::Patches::AdminControllerPatch)
+  AdminController.send(:include, RedminePreviewOffice::Patches::AdminControllerPatch)
 end
-
-
-

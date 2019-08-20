@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 #
 # Redmine plugin to preview a Microsoft Office attachment file
 #
@@ -24,69 +25,47 @@ module RedminePreviewOffice
     module AttachmentsControllerPatch
       def self.included(base)
         base.extend(ClassMethods)
-        base.send(:include, InstanceMethods)
-
+        base.send(:prepend, InstancOverwriteMethods)
         base.class_eval do
           unloadable
-            
-          alias_method_chain     :show, :office
-         
           alias_method           :find_attachment_for_preview_office, :find_attachment
-          before_action          :find_attachment_for_preview_office, :only => [:preview_office]
+          before_action          :find_attachment_for_preview_office, only: [:preview_office]
 
+          def preview_office
+            if @attachment.is_office_doc? && preview = @attachment.preview_office(size: params[:size])
+              if stale?(etag: preview)
+                send_file preview,
+                          filename: filename_for_content_disposition(preview),
+                          type: 'application/pdf',
+                          disposition: 'inline'
+              end
+            else
+              # No thumbnail for the attachment or thumbnail could not be created
+              head 404
+            end # if
+          end # def
+        end # base
+      end # self
 
-		  def preview_office
-
-			if @attachment.is_office_doc? && preview = @attachment.preview_office(:size => params[:size])
-
-			  if stale?(:etag => preview)
-
-				send_file preview,
-				  :filename => filename_for_content_disposition( preview ),
-				  :type => 'application/pdf',
-				  :disposition => 'inline'
-			  end
-			else
-			  # No thumbnail for the attachment or thumbnail could not be created
-			  head 404
-			end
-		  end #def
- 
-        end #base
-        
-      end #self
-
-      module InstanceMethods
-
-        def show_with_office
-          
+      module InstancOverwriteMethods
+        def show
           rendered = false
           respond_to do |format|
-            format.html {
+            format.html do
               if @attachment.is_office_doc?
-                render :action => 'office'
+                render action: 'office'
                 rendered = true
               end
-            }
+            end
             format.any {}
           end
-          
-          show_without_office unless rendered 
-        
-        end #def 
-
-      end #module  
-      
-      module ClassMethods      
-      end #module    
-
-    end #module
-  end #module
-end #module
+          super unless rendered
+        end # def
+      end # module
+    end # module
+  end # module
+end # module
 
 unless AttachmentsController.included_modules.include?(RedminePreviewOffice::Patches::AttachmentsControllerPatch)
-    AttachmentsController.send(:include, RedminePreviewOffice::Patches::AttachmentsControllerPatch)
+  AttachmentsController.send(:include, RedminePreviewOffice::Patches::AttachmentsControllerPatch)
 end
-
-
-
