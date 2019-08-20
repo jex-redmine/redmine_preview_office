@@ -1,3 +1,5 @@
+**Support redmine4 now**
+
 # redmine_preview_office
 
 Plugin for Redmine. Show Microsoft Office attachments in preview pane. 
