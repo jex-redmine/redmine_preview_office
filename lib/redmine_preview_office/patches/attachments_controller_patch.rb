@@ -24,7 +24,6 @@ module RedminePreviewOffice
   module Patches
     module AttachmentsControllerPatch
       def self.included(base)
-        base.extend(ClassMethods)
         base.send(:prepend, InstancOverwriteMethods)
         base.class_eval do
           unloadable

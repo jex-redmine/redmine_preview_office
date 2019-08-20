@@ -24,7 +24,6 @@ module RedminePreviewOffice
   module Patches
     module AdminControllerPatch
       def self.included(base)
-        base.extend(ClassMethods)
         base.send(:include, InstancOverwriteMethods)
 
         base.class_eval do
@@ -37,9 +36,6 @@ module RedminePreviewOffice
           super
           @checklist << [:text_libreoffice_available_for_preview_office, Redmine::Thumbnail.libreoffice_available?]
         end # def
-      end # module
-
-      module ClassMethods
       end # module
     end # module
   end # module
