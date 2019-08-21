@@ -51,7 +51,8 @@ module RedminePreviewOffice
 			    else
 				  cmd = "cd #{tmpdir}; #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} -f pdf #{shell_quote source}; mv #{shell_quote File.basename(source, File.extname(source)) + ".pdf"} #{shell_quote target}"
                 end
-                
+				
+				logger.info("Convert document with command: #{cmd}")
 				unless system(cmd)
 				  logger.error("Creating preview with #{@REDMINE_PREVIEW_OFFICE_CONVERT_BIN} failed (#{$?}):\nCommand: #{cmd}")
 				  return nil
