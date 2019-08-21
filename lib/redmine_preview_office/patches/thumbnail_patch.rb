@@ -33,7 +33,7 @@ module RedminePreviewOffice
           # a constant and how to patch a function, which has been defined as self.function()
           # in a base.class_eval block
           #
-		  @REDMINE_PREVIEW_OFFICE_CONVERT_BIN = ('soffice').freeze
+		  @REDMINE_PREVIEW_OFFICE_CONVERT_BIN = ('unoconv').freeze
 		  
 		  # Generates a thumbnail for the source image to target
 		  def self.generate_preview_office(source, target )
@@ -47,13 +47,13 @@ module RedminePreviewOffice
 			  			                
 			  Dir.mktmpdir do |tmpdir|
 			    if Redmine::Platform.mswin?
-			      cmd = "cd #{tmpdir} & #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} --invisible --headless --convert-to pdf #{shell_quote source} & move #{shell_quote File.basename(source, File.extname(source)) + ".pdf"} #{shell_quote target}"
+			      cmd = "cd #{tmpdir} & #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} -f pdf #{shell_quote source} & move #{shell_quote File.basename(source, File.extname(source)) + ".pdf"} #{shell_quote target}"
 			    else
-				  cmd = "cd #{tmpdir}; #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} --invisible --headless --convert-to pdf #{shell_quote source}; mv #{shell_quote File.basename(source, File.extname(source)) + ".pdf"} #{shell_quote target}"
+				  cmd = "cd #{tmpdir}; #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} -f pdf #{shell_quote source}; mv #{shell_quote File.basename(source, File.extname(source)) + ".pdf"} #{shell_quote target}"
                 end
                 
 				unless system(cmd)
-				  logger.error("Creating preview with libreoffice failed (#{$?}):\nCommand: #{cmd}")
+				  logger.error("Creating preview with #{@REDMINE_PREVIEW_OFFICE_CONVERT_BIN} failed (#{$?}):\nCommand: #{cmd}")
 				  return nil
 				end
 			  end
@@ -64,7 +64,7 @@ module RedminePreviewOffice
 		  def self.libreoffice_available?
 			return @libreoffice_available if defined?(@libreoffice_available)
 			@libreoffice_available = system("#{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} --version") rescue false
-			logger.warn("Libre Office (#{@REDMINE_PREVIEW_OFFICE_CONVERT_BIN}) not available") unless @libreoffice_available
+			logger.warn("(#{@REDMINE_PREVIEW_OFFICE_CONVERT_BIN}) not available") unless @libreoffice_available
 			@libreoffice_available
 		  end
 
