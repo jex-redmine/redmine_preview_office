@@ -47,9 +47,9 @@ module RedminePreviewOffice
 			  			                
 			  Dir.mktmpdir do |tmpdir|
 			    if Redmine::Platform.mswin?
-			      cmd = "cd #{tmpdir} & #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} -f pdf #{shell_quote source} & move #{shell_quote File.basename(source, File.extname(source)) + ".pdf"} #{shell_quote target}"
+			      cmd = "cd #{tmpdir} & #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} -f pdf #{shell_quote source} & move #{shell_quote File.basename(source, ".*") + ".pdf"} #{shell_quote target}"
 			    else
-				  cmd = "cd #{tmpdir}; #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} -f pdf #{shell_quote source}; mv #{shell_quote File.basename(source, File.extname(source)) + ".pdf"} #{shell_quote target}"
+				  cmd = "cd #{tmpdir}; #{shell_quote @REDMINE_PREVIEW_OFFICE_CONVERT_BIN} -f pdf #{shell_quote source}; mv #{shell_quote File.basename(source, ".*") + ".pdf"} #{shell_quote target}"
                 end
 				
 				logger.info("Convert document with command: #{cmd}")
