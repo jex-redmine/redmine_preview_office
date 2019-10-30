@@ -58,7 +58,7 @@ module RedminePreviewOffice
 								   :allowtransparency    => "true",
 								   :title                => attachment.filename,
 								   :src                  => preview_office_url(attachment),
-								   :onload               => "resizeObject(this);"
+								   :onload               => "resizeIframe(this);"
 								  }.merge(options)
 							 ),
 							 :style => "position:relative;padding-top:141%;"
