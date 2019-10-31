@@ -17,7 +17,9 @@ Supports .doc, .docx, .xls, .xlsx, .ppt, .pptx, .rtf, .odt
 
 2. download plugin and copy plugin folder redmine_preview_office go to Redmine's plugins folder 
 
-3. restart server f.i.  
+3. Install [unoconv](https://github.com/unoconv/unoconv)
+
+4. restart server f.i.  
 
 `sudo /etc/init.d/apache2 restart`
 
@@ -108,7 +110,6 @@ your system.
 
 * Go to Administration->Information and verify if Libreoffice is available
 * On Issue show page click on a docx or other Microsoft Office attachment and view its contents in Redmine's preview pane as a pdf file
-* install [unoconv](https://github.com/unoconv/unoconv)
 
 **Have fun!**
 
