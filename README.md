@@ -108,6 +108,7 @@ your system.
 
 * Go to Administration->Information and verify if Libreoffice is available
 * On Issue show page click on a docx or other Microsoft Office attachment and view its contents in Redmine's preview pane as a pdf file
+* install [unoconv](https://github.com/unoconv/unoconv)
 
 **Have fun!**
 
