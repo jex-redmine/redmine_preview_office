@@ -23,6 +23,67 @@ Supports .doc, .docx, .xls, .xlsx, .ppt, .pptx, .rtf, .odt
 
 `sudo /etc/init.d/apache2 restart`
 
+### 补充
+
+Production servers should consider running unoconv in listener mode, see Installing_unoconv#Run_a_unoconv_listener or follow directions bellow
+
+  `vi /etc/systemd/system/unoconv.service`
+    
+  And then copy and paste the following configuration into it:
+
+  ```
+  [Unit]
+  Description=Unoconv listener for document conversions
+  Documentation=https://github.com/dagwieers/unoconv
+  After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple
+Environment="UNO_PATH=/usr/lib64/libreoffice/program"
+ExecStart=/usr/bin/unoconv --listener
+
+[Install]
+WantedBy=multi-user.target
+And then enable and start the above service
+
+systemctl enable unoconv.service
+systemctl start unoconv.service
+  ```
+
+`vi  /etc/init/unoconv.conf`
+
+ ```
+# Unoconv listener service
+
+# Install to /etc/init/ folder and start with "sudo service unoconv start"
+# This will start a unoconv listener and restart it if it dies. The listener
+# will run as the apache user "www-data" and have access to the same files/folders
+# as that user.
+# The home folder for this listener will point to /tmp/ and any temporary files used by
+# libreoffice will be created there.
+
+description     "Unoconv Apache Listener"
+author          "Damyon Wiese <damyon@moodle.com>"
+
+start on runlevel [2345]
+stop on starting rc RUNLEVEL=[016]
+
+respawn
+respawn limit 2 5
+
+env HOME=/tmp
+setuid www-data
+
+# The default of 5 seconds is too low for mysql which needs to flush buffers
+
+pre-start script
+    # Kill any currently running soffice processes.
+    /usr/bin/killall soffice.bin || true
+end script
+
+exec /usr/bin/unoconv --listener
+```
+ 
 ### Uninstall
 
 1. go to plugins folder, delete plugin folder redmine_preview_office
